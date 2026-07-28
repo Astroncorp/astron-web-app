@@ -163,6 +163,7 @@ const shareApp = () => {
 		</div>
 		<div class="h-[12rem] p-5">
 			<p class="text-lg">Salom {{ user }}</p>
+			<p class="text-lg">{{ $route.query }}</p>
 			<p class="text-3xl">Astronga xush kelibsiz!</p>
 			<p class="text-lg">ID: {{ miniApp.initDataUnsafe.user?.id }}</p>
 			<!-- <p class="text-lg">
