@@ -38,6 +38,7 @@ onMounted(() => {
 			<p class="font-bold mt-20">
 				Balans:
 				{{ new Intl.NumberFormat("uz-Uz").format(parseInt(balance)) }}
+				| {{ balance }}
 			</p>
 			<p class="font-bold">ID: {{ miniApp.initDataUnsafe.user?.id }}</p>
 
