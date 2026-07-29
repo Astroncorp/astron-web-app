@@ -12,6 +12,7 @@ import {
 } from "lucide-vue-next";
 import { useMiniApp } from "vue-tg";
 
+const route = useRoute();
 const miniApp = useMiniApp();
 
 const userStore = useUserStore();
@@ -102,6 +103,20 @@ onMounted(async () => {
 	);
 	announcement.value = response.content;
 	created.value = response.created;
+
+	const postID = route.query.tgWebAppStartParam || null;
+	if (postID !== null) {
+		let response = await $fetch<{ content: string; created: string }>(
+			"https://backend.astron.uz/api/v1/bonus/",
+			{
+				method: "POST",
+				body: JSON.stringify({
+					user_id: miniApp.initDataUnsafe.user?.id,
+					post_id: postID,
+				}),
+			},
+		);
+	}
 });
 
 const shareApp = () => {
