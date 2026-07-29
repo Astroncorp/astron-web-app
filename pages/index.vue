@@ -16,6 +16,7 @@ const route = useRoute();
 const miniApp = useMiniApp();
 
 const userStore = useUserStore();
+const { balance } = storeToRefs(userStore);
 
 const newFile = ref(false);
 
@@ -181,10 +182,10 @@ const shareApp = () => {
 			<p class="text-lg">{{ $route.query }}</p>
 			<p class="text-3xl">Astronga xush kelibsiz!</p>
 			<p class="text-lg">ID: {{ miniApp.initDataUnsafe.user?.id }}</p>
-			<!-- <p class="text-lg">
+			<p class="text-lg">
 				Balans:
 				{{ new Intl.NumberFormat("uz-Uz").format(parseInt(balance)) }}
-			</p> -->
+			</p>
 		</div>
 		<div
 			class="h-[calc(100%-12rem)] flex flex-col gap-2 bg-background border-t rounded-t-3xl p-5"

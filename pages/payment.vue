@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { LucideChevronLeft } from "lucide-vue-next";
 import { useMiniApp } from "vue-tg";
-import { cn } from "~/lib/utils";
 
 const router = useRouter();
 const miniApp = useMiniApp();
@@ -38,7 +37,6 @@ onMounted(() => {
 			<p class="font-bold mt-20">
 				Balans:
 				{{ new Intl.NumberFormat("uz-Uz").format(parseInt(balance)) }}
-				| {{ balance }}
 			</p>
 			<p class="font-bold">ID: {{ miniApp.initDataUnsafe.user?.id }}</p>
 
