@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import Toaster from '@/components/ui/toast/Toaster.vue'
+import
+
 onMounted(() => {
 	window.yaContextCb = window.yaContextCb || [];
 
@@ -22,6 +25,9 @@ onMounted(() => {
 	<div>
 		<NuxtRouteAnnouncer />
 		<NuxtLoadingIndicator />
+		<ClientOnly>
+			<Toaster />
+		</ClientOnly>
 		<NuxtLayout>
 			<ClientOnly>
 				<NuxtPage />

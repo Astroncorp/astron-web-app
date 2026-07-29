@@ -10,6 +10,7 @@ import {
 	LucideBell,
 	LucideShare,
 } from "lucide-vue-next";
+import { toast } from "vue-sonner";
 import { useMiniApp } from "vue-tg";
 
 const route = useRoute();
@@ -107,7 +108,7 @@ onMounted(async () => {
 
 	const postID = route.query.tgWebAppStartParam || null;
 	if (postID !== null) {
-		let response = await $fetch<{ content: string; created: string }>(
+		let response = await $fetch<{ claimed: boolean }>(
 			"https://backend.astron.uz/api/v1/bonus/",
 			{
 				method: "POST",
@@ -117,6 +118,17 @@ onMounted(async () => {
 				}),
 			},
 		);
+
+		if (response.claimed) {
+			toast("✅Balansingizga 1 000 so'm bonus o'tkazildi", {
+				action: {
+					label: "Tekshirish",
+					onClick: () => {
+						login();
+					},
+				},
+			});
+		}
 	}
 });
 
