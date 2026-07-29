@@ -128,6 +128,8 @@ onMounted(async () => {
 					},
 				},
 			});
+		} else {
+			toast("Siz bonus olgansiz");
 		}
 	}
 });
