@@ -25,7 +25,7 @@ onMounted(() => {
 		<NuxtRouteAnnouncer />
 		<NuxtLoadingIndicator />
 		<ClientOnly>
-			<Toaster />
+			<Toaster position="top-left" />
 		</ClientOnly>
 		<NuxtLayout>
 			<ClientOnly>

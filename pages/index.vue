@@ -129,7 +129,7 @@ onMounted(async () => {
 				},
 			});
 		} else {
-			toast("Siz bonus olgansiz");
+			toast("❌Siz ushbu post uchun allaqachon bonus olgansiz!");
 		}
 	}
 });
