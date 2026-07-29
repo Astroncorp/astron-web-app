@@ -127,9 +127,12 @@ onMounted(async () => {
 						login();
 					},
 				},
+				duration: 5000,
 			});
 		} else {
-			toast("❌Siz ushbu post uchun allaqachon bonus olgansiz!");
+			toast("❌Siz ushbu post uchun allaqachon bonus olgansiz!", {
+				duration: 5000,
+			});
 		}
 	}
 });
