@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import Toaster from '@/components/ui/toast/Toaster.vue'
-import
+import Toaster from "@/components/ui/toast/Toaster.vue";
 
 onMounted(() => {
 	window.yaContextCb = window.yaContextCb || [];
