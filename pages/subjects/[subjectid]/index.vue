@@ -86,6 +86,7 @@ onMounted(() => {
 						v-if="$route.query.type === 'test'"
 					>
 						<LucideChevronRight
+							v-if="klass.purchased"
 							@click="
 								navigateTo({
 									name: 'subjects-subjectid-classid',
@@ -97,6 +98,75 @@ onMounted(() => {
 								})
 							"
 						/>
+						<Dialog v-else>
+							<DialogTrigger>
+								<Button
+									size="xs"
+									:class="
+										klass.price > parseInt(balance)
+											? 'bg-red-500'
+											: 'bg-green-500'
+									"
+								>
+									<LucideShoppingCart />
+									<span>{{
+										new Intl.NumberFormat("uz-UZ").format(
+											klass.price,
+										)
+									}}</span>
+								</Button>
+							</DialogTrigger>
+							<DialogContent>
+								<DialogHeader>
+									<DialogTitle>Eslatma</DialogTitle>
+									<DialogDescription></DialogDescription>
+								</DialogHeader>
+								<p
+									class="text-center"
+									v-if="parseInt(balance) >= klass.price"
+								>
+									<span class="font-bold"
+										>"{{ klass.classes_name }}"</span
+									>
+									ni ochish uchun bir martalik to'lov qiling.
+									<br />
+									<span
+										>To'lov summasi:
+										{{
+											new Intl.NumberFormat(
+												"uz-UZ",
+											).format(klass.price)
+										}}
+										so'm</span
+									>
+								</p>
+								<p class="text-center" v-else>
+									Balansingizda yetarli mablag' mavjud emas.
+									Hisobingizni to'ldiring. <br />
+									<span>
+										Darslikni ochish uchun bir martalik
+										to'lov summasi:
+										{{
+											new Intl.NumberFormat(
+												"uz-UZ",
+											).format(klass.price)
+										}}
+										so'm.
+									</span>
+								</p>
+								<DialogFooter class="flex-row-reverse gap-2">
+									<DialogClose>
+										<Button
+											v-if="
+												parseInt(balance) >= klass.price
+											"
+											@click="buyKlass(klass)"
+											>Balansdan yechish</Button
+										>
+									</DialogClose>
+								</DialogFooter>
+							</DialogContent>
+						</Dialog>
 					</div>
 					<div v-else>
 						<LucideChevronRight
