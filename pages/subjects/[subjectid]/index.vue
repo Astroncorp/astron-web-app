@@ -21,7 +21,6 @@ const userStore = useUserStore();
 const subjectsStore = useSubjectsStore();
 
 const { token, balance } = storeToRefs(userStore);
-const { subjects } = storeToRefs(subjectsStore);
 
 const isLoading = ref(true);
 const classes = ref<IClass[]>([]);
