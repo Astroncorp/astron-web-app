@@ -1,9 +1,5 @@
 <script setup lang="ts">
-import {
-	LucideChevronLeft,
-	LucideChevronRight,
-	LucideShoppingCart,
-} from "lucide-vue-next";
+import { LucideChevronLeft, LucideChevronRight } from "lucide-vue-next";
 
 interface IClass {
 	classes_id: string;
@@ -18,9 +14,8 @@ const route = useRoute();
 const router = useRouter();
 
 const userStore = useUserStore();
-const subjectsStore = useSubjectsStore();
 
-const { token, balance } = storeToRefs(userStore);
+const { token } = storeToRefs(userStore);
 
 const isLoading = ref(true);
 const classes = ref<IClass[]>([]);
@@ -40,17 +35,6 @@ const getClassess = async () => {
 
 	classes.value = response;
 	isLoading.value = true;
-};
-
-const buyKlass = async (klass: IClass) => {
-	await $fetch("https://astrontest.uz/mobile-api/api/uz/buy-class", {
-		method: "POST",
-		body: JSON.stringify({
-			token: token.value,
-			class_id: klass.classes_id,
-		}),
-	});
-	getClassess();
 };
 
 definePageMeta({
@@ -85,7 +69,6 @@ onMounted(() => {
 						v-if="$route.query.type === 'test'"
 					>
 						<LucideChevronRight
-							v-if="klass.purchased"
 							@click="
 								navigateTo({
 									name: 'subjects-subjectid-classid',
@@ -97,7 +80,7 @@ onMounted(() => {
 								})
 							"
 						/>
-						<Dialog v-else>
+						<!-- <Dialog v-else>
 							<DialogTrigger>
 								<Button
 									size="xs"
@@ -165,7 +148,7 @@ onMounted(() => {
 									</DialogClose>
 								</DialogFooter>
 							</DialogContent>
-						</Dialog>
+						</Dialog> -->
 					</div>
 					<div v-else>
 						<LucideChevronRight
