@@ -8,16 +8,17 @@ let progressTimer: ReturnType<typeof setInterval> | null = null;
 
 onMounted(() => {
 	const gateStartedAt = performance.now();
-	const gateDuration = 5000;
+	const progressDuration = 5000;
+	const gateDuration = 6000;
 
 	const updateLoadingProgress = () => {
 		const elapsed = performance.now() - gateStartedAt;
 		const step = Math.min(5, Math.floor(elapsed / 1000));
 
-		loadingProgress.value = step * 20;
+		loadingProgress.value =
+			elapsed >= progressDuration ? 100 : step * 20;
 
 		if (elapsed >= gateDuration) {
-			loadingProgress.value = 100;
 			showLoadingGate.value = false;
 
 			if (progressTimer) {
@@ -70,8 +71,6 @@ onBeforeUnmount(() => {
 
 		<ClientOnly>
 			<div v-if="showLoadingGate" class="loading-gate">
-				<div class="loading-gate__brand">Astron | Tarix</div>
-
 				<div class="loading-gate__content">
 					<div class="loading-gate__title">Ilova yuklanmoqda...</div>
 
@@ -82,12 +81,9 @@ onBeforeUnmount(() => {
 						></div>
 					</div>
 
-					<div class="loading-gate__percent">
-						{{ loadingProgress }}%
-					</div>
+					<div class="loading-gate__percent">{{ loadingProgress }}%</div>
 				</div>
 
-				<div class="loading-gate__bot">@astrontest_bot</div>
 			</div>
 		</ClientOnly>
 	</div>
@@ -101,7 +97,7 @@ onBeforeUnmount(() => {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: space-between;
+	justify-content: center;
 	box-sizing: border-box;
 	width: 100%;
 	height: 100vh;
@@ -111,14 +107,6 @@ onBeforeUnmount(() => {
 	color: #111111;
 	touch-action: none;
 	overscroll-behavior: none;
-}
-
-.loading-gate__brand {
-	margin-top: 4px;
-	font-size: 20px;
-	font-weight: 700;
-	line-height: 1.2;
-	text-align: center;
 }
 
 .loading-gate__content {
@@ -153,12 +141,5 @@ onBeforeUnmount(() => {
 	font-size: 16px;
 	font-weight: 500;
 	line-height: 1.2;
-}
-
-.loading-gate__bot {
-	font-size: 15px;
-	font-weight: 500;
-	line-height: 1.2;
-	text-align: center;
 }
 </style>
