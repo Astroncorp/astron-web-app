@@ -20,6 +20,15 @@ interface IQuestion {
     is_solved: boolean;
 }
 
+interface IClass {
+    classes_id: string;
+    subject_id: string;
+    classes_name: string;
+    classes_status: string;
+    purchased: boolean;
+    price: number;
+}
+
 const route = useRoute();
 const router = useRouter();
 
@@ -29,6 +38,7 @@ const { token } = storeToRefs(userStore);
 
 const isLoading = ref(true);
 const questions = ref<IQuestion[]>([]);
+const className = ref("");
 
 
 const getMixedTests = async () => {
@@ -60,6 +70,30 @@ const calculate = computed(() => {
 });
 
 
+const getResultMeta = async () => {
+    try {
+        const classesResponse = await $fetch<IClass[]>("https://astrontest.uz/mobile-api/api/uz/classesuz?lang=uz", {
+            method: "POST",
+            body: JSON.stringify({
+                token: token.value,
+                subjectid: route.params.subjectid,
+            }),
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+
+        const currentClass = classesResponse.find(
+            (klass) => String(klass.classes_id) === String(route.params.classid)
+        );
+
+        className.value = currentClass?.classes_name ?? "";
+    } catch (error) {
+        console.error("Darslik nomini olishda xatolik:", error);
+    }
+};
+
+
 definePageMeta({
     middleware: [
         "is-telegram",
@@ -69,6 +103,7 @@ definePageMeta({
 
 onMounted(() => {
     getMixedTests();
+    getResultMeta();
     isLoading.value = false;
 });
 </script>
@@ -87,7 +122,7 @@ onMounted(() => {
                     <DrawerTrigger as-child>
                         <Button size="sm">Natija</Button>
                     </DrawerTrigger>
-                    <DrawerContent class="h-3/4 p-5">
+                    <DrawerContent class="h-3/4 p-5 overflow-y-auto">
                         <DrawerHeader>
                             <DrawerTitle></DrawerTitle>
                             <DrawerDescription></DrawerDescription>
@@ -95,6 +130,12 @@ onMounted(() => {
                         <div class="grid items-center justify-center gap-2 w-full">
                             <p class="text-end text-muted-foreground">
                                 {{ new Date().toLocaleDateString("en-GB").replace(/\//g, '/') }}
+                            </p>
+                            <p v-if="className" class="w-full text-center text-base font-semibold leading-snug whitespace-normal break-words px-2">
+                                {{ className }}
+                            </p>
+                            <p class="w-full text-center text-base font-normal leading-snug whitespace-normal break-words px-2">
+                                Nazorat testi (Darslik bo'yicha)
                             </p>
                             <div class="flex flex-col gap-1 items-center justify-center bg-accent/50 p-2 rounded-md">
                                 <div class="flex items-center gap-1">
