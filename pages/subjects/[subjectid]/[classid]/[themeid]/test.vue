@@ -19,6 +19,24 @@ interface ITest {
 }
 
 
+interface IClass {
+    classes_id: string;
+    subject_id: string;
+    classes_name: string;
+    classes_status: string;
+    purchased: boolean;
+    price: number;
+}
+
+interface IMavzu {
+    mavzu_id: string;
+    fan_id: string;
+    sinf_id: string;
+    mavzu_nomi: string;
+    mavzu_status: string;
+}
+
+
 const route = useRoute();
 const router = useRouter();
 
@@ -29,6 +47,8 @@ const { token } = storeToRefs(userStore);
 
 const isLoading = ref(true);
 const tests = ref<ITest[]>([]);
+const className = ref("");
+const themeName = ref("");
 
 
 
@@ -54,6 +74,48 @@ const getTests = async () => {
     isLoading.value = true;
 };
 
+
+const getResultMeta = async () => {
+    try {
+        const [classesResponse, themesResponse] = await Promise.all([
+            $fetch<IClass[]>("https://astrontest.uz/mobile-api/api/uz/classesuz?lang=uz", {
+                method: "POST",
+                body: JSON.stringify({
+                    token: token.value,
+                    subjectid: route.params.subjectid,
+                }),
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            }),
+            $fetch<IMavzu[]>("https://astrontest.uz/mobile-api/api/uz/testthemeuz?lang=uz", {
+                method: "POST",
+                body: JSON.stringify({
+                    token: token.value,
+                    subjectid: route.params.subjectid,
+                    classesid: route.params.classid,
+                }),
+                headers: {
+                    "Content-Type": "application/json",
+                }
+            }),
+        ]);
+
+        const currentClass = classesResponse.find(
+            (klass) => String(klass.classes_id) === String(route.params.classid)
+        );
+
+        const currentTheme = themesResponse.find(
+            (theme) => String(theme.mavzu_id) === String(route.params.themeid)
+        );
+
+        className.value = currentClass?.classes_name ?? "";
+        themeName.value = currentTheme?.mavzu_nomi ?? "";
+    } catch (error) {
+        console.error("Darslik va mavzu nomini olishda xatolik:", error);
+    }
+};
+
 const selected = computed(() => {
     return tests.value.filter(test => test.is_selected).length === tests.value.length;
 });
@@ -76,6 +138,7 @@ definePageMeta({
 
 onMounted(() => {
     getTests();
+    getResultMeta();
     isLoading.value = false;
 });
 </script>
@@ -94,13 +157,21 @@ onMounted(() => {
                     <DrawerTrigger as-child>
                         <Button size="sm">Natija</Button>
                     </DrawerTrigger>
-                    <DrawerContent class="h-3/4 p-5">
+                    <DrawerContent class="h-3/4 p-5 overflow-y-auto">
                         <DrawerHeader>
                             <DrawerTitle></DrawerTitle>
                             <DrawerDescription></DrawerDescription>
                         </DrawerHeader>
                         <div class="grid items-center justify-center gap-2 w-full">
                             <p class="text-end text-muted-foreground">{{ new Date().toLocaleDateString("uz-UZ") }}</p>
+                            <p v-if="className"
+                                class="w-full text-center text-base font-semibold leading-snug whitespace-normal break-words px-2">
+                                {{ className }}
+                            </p>
+                            <p v-if="themeName"
+                                class="w-full text-center text-base font-normal leading-snug whitespace-normal break-words px-2">
+                                {{ themeName }}
+                            </p>
                             <div class="flex flex-col gap-1 items-center justify-center bg-accent/50 p-2 rounded-md">
                                 <div class="flex items-center gap-1">
                                     <p>Umumiy: {{ calculate().all }} ta</p>
