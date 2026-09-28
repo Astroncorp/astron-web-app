@@ -25,6 +25,47 @@ const quizzes = ref<IQuiz[]>([]);
 const index = ref(0);
 const open = ref(false);
 
+const YANDEX_BANNER_BLOCK_ID = "R-A-19395198-5";
+const YANDEX_BANNER_RENDER_TO = "yandex_rtb_R-A-19395198-5";
+
+const loadYandexAds = () => {
+    if (!import.meta.client) return;
+
+    const renderBanner = () => {
+        try {
+            window.yaContextCb = window.yaContextCb || [];
+            window.yaContextCb.push(() => {
+                try {
+                    Ya.Context.AdvManager.render({
+                        blockId: YANDEX_BANNER_BLOCK_ID,
+                        renderTo: YANDEX_BANNER_RENDER_TO,
+                    });
+                } catch (error) {
+                    console.error("Yandex banner render xatoligi:", error);
+                }
+            });
+        } catch (error) {
+            console.error("Yandex banner xatoligi:", error);
+        }
+    };
+
+    const existingScript = document.querySelector(
+        'script[src="https://yandex.ru/ads/system/context.js"]'
+    );
+
+    if (existingScript) {
+        renderBanner();
+        return;
+    }
+
+    const script = document.createElement("script");
+    script.src = "https://yandex.ru/ads/system/context.js";
+    script.async = true;
+    script.onload = renderBanner;
+    script.onerror = () => console.error("Yandex reklama skripti yuklanmadi.");
+    document.head.appendChild(script);
+};
+
 
 
 const getQuizzes = async () => {
@@ -59,6 +100,7 @@ definePageMeta({
 onMounted(() => {
     getQuizzes();
     isLoading.value = false;
+    loadYandexAds();
 });
 </script>
 
@@ -102,6 +144,10 @@ onMounted(() => {
                         <LucideChevronRight />
                     </Button>
                     <div v-else></div>
+                </div>
+                <br>
+                <div class="w-full">
+                    <div id="yandex_rtb_R-A-19395198-5"></div>
                 </div>
                 <br>
             </ScrollArea>
