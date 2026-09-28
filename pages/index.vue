@@ -319,38 +319,19 @@ const openDonation = () => {
 							xmlns="http://www.w3.org/2000/svg"
 							aria-hidden="true"
 						>
-							<path
-								d="M4 9H20V21H4V9Z"
-								stroke="currentColor"
-								stroke-width="1.8"
-								stroke-linejoin="round"
-							/>
-							<path
-								d="M4 9L7 5H9.2M20 9L17 5H14.8"
-								stroke="currentColor"
-								stroke-width="1.8"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-							/>
-							<path
-								d="M8.5 9H15.5"
-								stroke="currentColor"
-								stroke-width="1.8"
-								stroke-linecap="round"
-							/>
 							<circle
 								cx="12"
-								cy="5"
-								r="3.2"
-								fill="var(--background)"
+								cy="12"
+								r="9"
 								stroke="currentColor"
-								stroke-width="1.8"
+								stroke-width="2"
 							/>
 							<path
-								d="M12 2.8V7.2M13.25 3.7C12.9 3.35 12.45 3.2 12 3.2C11.25 3.2 10.7 3.6 10.7 4.15C10.7 4.75 11.2 5 12 5.2C12.8 5.4 13.3 5.65 13.3 6.25C13.3 6.8 12.75 7.2 12 7.2C11.45 7.2 10.95 7 10.6 6.65"
+								d="M12 6V18M15 8.2C14.3 7.5 13.3 7 12 7C10.3 7 9 7.9 9 9.2C9 10.7 10.2 11.3 12 11.8C13.8 12.3 15 12.9 15 14.4C15 15.8 13.7 17 12 17C10.6 17 9.5 16.5 8.7 15.7"
 								stroke="currentColor"
-								stroke-width="1.2"
+								stroke-width="2"
 								stroke-linecap="round"
+								stroke-linejoin="round"
 							/>
 						</svg>
 						<p>Donat yuborish</p>
