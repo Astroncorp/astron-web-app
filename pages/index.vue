@@ -148,6 +148,17 @@ const shareApp = () => {
 		window.open(tgUrl, "_blank");
 	}
 };
+
+
+const openDonation = () => {
+	const donationUrl = "https://taps.uz/tarix_repetitor_astron";
+
+	if (window.Telegram?.WebApp) {
+		window.Telegram.WebApp.openLink(donationUrl);
+	} else {
+		window.open(donationUrl, "_blank");
+	}
+};
 </script>
 
 <template>
@@ -292,6 +303,57 @@ const shareApp = () => {
 					<div class="flex items-center gap-2">
 						<LucideShare :size="20" />
 						<p>Ilovani ulashish</p>
+					</div>
+					<div class="flex items-center justify-center">
+						<LucideChevronRight />
+					</div>
+				</div>
+
+				<div class="flex justify-between p-3" @click="openDonation">
+					<div class="flex items-center gap-2">
+						<svg
+							width="20"
+							height="20"
+							viewBox="0 0 24 24"
+							fill="none"
+							xmlns="http://www.w3.org/2000/svg"
+							aria-hidden="true"
+						>
+							<path
+								d="M4 9H20V21H4V9Z"
+								stroke="currentColor"
+								stroke-width="1.8"
+								stroke-linejoin="round"
+							/>
+							<path
+								d="M4 9L7 5H9.2M20 9L17 5H14.8"
+								stroke="currentColor"
+								stroke-width="1.8"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							/>
+							<path
+								d="M8.5 9H15.5"
+								stroke="currentColor"
+								stroke-width="1.8"
+								stroke-linecap="round"
+							/>
+							<circle
+								cx="12"
+								cy="5"
+								r="3.2"
+								fill="var(--background)"
+								stroke="currentColor"
+								stroke-width="1.8"
+							/>
+							<path
+								d="M12 2.8V7.2M13.25 3.7C12.9 3.35 12.45 3.2 12 3.2C11.25 3.2 10.7 3.6 10.7 4.15C10.7 4.75 11.2 5 12 5.2C12.8 5.4 13.3 5.65 13.3 6.25C13.3 6.8 12.75 7.2 12 7.2C11.45 7.2 10.95 7 10.6 6.65"
+								stroke="currentColor"
+								stroke-width="1.2"
+								stroke-linecap="round"
+							/>
+						</svg>
+						<p>Donat yuborish</p>
 					</div>
 					<div class="flex items-center justify-center">
 						<LucideChevronRight />
