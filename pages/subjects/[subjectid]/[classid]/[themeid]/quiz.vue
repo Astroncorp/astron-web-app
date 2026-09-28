@@ -112,11 +112,10 @@ onMounted(() => {
             </div>
             <p>Savollar</p>
         </div>
-        <div class="h-[calc(100%-3rem)] flex flex-col gap-2 px-5">
-            <ScrollArea class="h-full">
-                <div class="min-h-full flex flex-col">
-                    <br>
-                    <div class="bg-accent/30 rounded-md p-2">
+        <div class="h-[calc(100%-3rem)] flex flex-col px-5 bg-background">
+            <ScrollArea class="flex-1 min-h-0">
+                <br>
+                <div class="bg-accent/30 rounded-md p-2">
                     <Collapsible v-if="getQuiz(index)" v-model:open="open">
                         <CollapsibleTrigger>
                             <div class="flex items-center gap-2 text-start text-lg">
@@ -146,14 +145,11 @@ onMounted(() => {
                     </Button>
                     <div v-else></div>
                 </div>
-                    <div class="flex-1"></div>
-                    <br>
-                    <div class="w-full h-[190px] overflow-hidden">
-                        <div id="yandex_rtb_R-A-19395198-5"></div>
-                    </div>
-                    <br>
-                </div>
+                <br>
             </ScrollArea>
+            <div class="w-full h-[190px] shrink-0 overflow-hidden bg-background">
+                <div id="yandex_rtb_R-A-19395198-5"></div>
+            </div>
         </div>
     </div>
 </template>
