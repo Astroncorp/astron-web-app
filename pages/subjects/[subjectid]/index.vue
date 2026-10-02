@@ -60,7 +60,8 @@ onMounted(() => {
 		<div class="h-[calc(100%-3rem)] flex flex-col gap-2 p-5">
 			<br />
 			<div class="bg-accent/30 rounded-md divide-y">
-				<div v-for="klass in classes" class="flex justify-between p-2">
+				<div v-for="klass in classes" class="flex justify-between p-2 cursor-pointer"
+					@click="navigateTo({ name: 'subjects-subjectid-classid', params: { subjectid: klass.subject_id, classid: klass.classes_id }, query: $route.query })">
 					<div class="flex items-center gap-2">
 						<p class="">{{ klass.classes_name }}</p>
 					</div>
@@ -69,16 +70,7 @@ onMounted(() => {
 						v-if="$route.query.type === 'test'"
 					>
 						<LucideChevronRight
-							@click="
-								navigateTo({
-									name: 'subjects-subjectid-classid',
-									params: {
-										subjectid: klass.subject_id,
-										classid: klass.classes_id,
-									},
-									query: $route.query,
-								})
-							"
+							
 						/>
 						<!-- <Dialog v-else>
 							<DialogTrigger>
@@ -152,16 +144,7 @@ onMounted(() => {
 					</div>
 					<div v-else>
 						<LucideChevronRight
-							@click="
-								navigateTo({
-									name: 'subjects-subjectid-classid',
-									params: {
-										subjectid: klass.subject_id,
-										classid: klass.classes_id,
-									},
-									query: $route.query,
-								})
-							"
+							
 						/>
 					</div>
 				</div>
