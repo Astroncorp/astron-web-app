@@ -24,6 +24,26 @@ definePageMeta({
 	middleware: ["is-telegram", "get-subjects"],
 });
 
+// Faqat Testlar bo'limidagi fan tanlanganda bitta kirishni hisoblash.
+// So'rov xatosi fan sahifasiga o'tishga xalaqit bermaydi.
+const openTestSubject = (subjectId: number) => {
+	try {
+		void fetch("https://backend.astron.uz/api/v1/subject-visit/", {
+			method: "POST",
+			headers: { "Content-Type": "text/plain" },
+			body: JSON.stringify({ subject_id: subjectId }),
+			keepalive: true,
+		}).catch(() => {});
+	} catch (_) {
+		// Hisoblagich ishlamasa ham foydalanuvchi testga o'ta oladi.
+	}
+	navigateTo({
+		name: "subjects-subjectid",
+		params: { subjectid: subjectId },
+		query: route.query,
+	});
+};
+
 const getSubjects = async () => {
 	const response = await $fetch<ISubject[]>(
 		"https://astrontest.uz/mobile-api/api/uz/subjectuz?lang=uz",
@@ -103,15 +123,7 @@ onMounted(async () => {
 						(subject) => subject.t_status === 1,
 					)"
 					class="flex justify-between p-2"
-					@click="
-						() => {
-							navigateTo({
-								name: 'subjects-subjectid',
-								params: { subjectid: subject.subject_id },
-								query: $route.query,
-							});
-						}
-					"
+					@click="openTestSubject(subject.subject_id)"
 				>
 					<div class="flex items-center gap-2">
 						<p class="">{{ subject.subject_name }}</p>
