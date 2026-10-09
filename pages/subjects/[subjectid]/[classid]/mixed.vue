@@ -2,22 +2,23 @@
 import { LucideChevronLeft } from 'lucide-vue-next';
 
 
+
 interface IVariant {
     variant: string;
     var_id: string;
     is_right: string;
 }
 
-interface ITest {
+
+interface IQuestion {
     savol_id: string;
     savol_nomi: string;
-    test_file: string;
     variant: IVariant[];
+    test_file: string;
+    selected: string;
     is_selected: boolean;
     is_solved: boolean;
-    selected: string;
 }
-
 
 interface IClass {
     classes_id: string;
@@ -28,30 +29,19 @@ interface IClass {
     price: number;
 }
 
-interface IMavzu {
-    mavzu_id: string;
-    fan_id: string;
-    sinf_id: string;
-    mavzu_nomi: string;
-    mavzu_status: string;
-}
-
-
 const route = useRoute();
 const router = useRouter();
 
 const userStore = useUserStore();
-const subjectsStore = useSubjectsStore();
 
 const { token } = storeToRefs(userStore);
 
 const isLoading = ref(true);
-const tests = ref<ITest[]>([]);
+const questions = ref<IQuestion[]>([]);
 const className = ref("");
-const themeName = ref("");
 
 
-const YANDEX_RESULT_BLOCK_ID = "R-A-19395198-3";
+const YANDEX_RESULT_BLOCK_ID = "R-A-19395198-4";
 const YANDEX_LOADER_SRC = "https://yandex.ru/ads/system/context.js";
 
 const ensureYandexLoader = () => {
@@ -94,93 +84,68 @@ const showResultAd = () => {
 };
 
 
-
-const getTests = async () => {
+const getMixedTests = async () => {
     isLoading.value = true;
-    let response = await $fetch<string>("https://astrontest.uz/mobile-api/api/uz/testlaruz?lang=uz", {
+    let response = await $fetch<string>("https://astrontest.uz/mobile-api/api/mixedtestuz.php?lang=uz", {
         method: "POST",
         body: JSON.stringify({
             "token": token.value,
             "subjectid": route.params.subjectid,
-            "classid": route.params.classid,
-            "themeid": route.params.themeid,
+            "classid": route.params.classid
         }),
         headers: {
             "Content-Type": "application/json",
         }
     });
 
-    console.log(response);
-
-    tests.value = JSON.parse(response);
-    tests.value = tests.value.map((test) => ({ ...test, is_solved: false, selected: "", is_selected: false }));
+    questions.value = JSON.parse(response);
+    questions.value = questions.value.map((test) => ({ ...test, selected: "", is_selected: false, is_solved: false }));
     isLoading.value = true;
 };
 
 
-const getResultMeta = async () => {
-    try {
-        const [classesResponse, themesResponse] = await Promise.all([
-            $fetch<IClass[]>("https://astrontest.uz/mobile-api/api/uz/classesuz?lang=uz", {
-                method: "POST",
-                body: JSON.stringify({
-                    token: token.value,
-                    subjectid: route.params.subjectid,
-                }),
-                headers: {
-                    "Content-Type": "application/json",
-                }
-            }),
-            $fetch<IMavzu[]>("https://astrontest.uz/mobile-api/api/uz/testthemeuz?lang=uz", {
-                method: "POST",
-                body: JSON.stringify({
-                    token: token.value,
-                    subjectid: route.params.subjectid,
-                    classesid: route.params.classid,
-                }),
-                headers: {
-                    "Content-Type": "application/json",
-                }
-            }),
-        ]);
-
-        const currentClass = classesResponse.find(
-            (klass) => String(klass.classes_id) === String(route.params.classid)
-        );
-
-        const currentTheme = themesResponse.find(
-            (theme) => String(theme.mavzu_id) === String(route.params.themeid)
-        );
-
-        className.value = currentClass?.classes_name ?? "";
-        themeName.value = currentTheme?.mavzu_nomi ?? "";
-    } catch (error) {
-        console.error("Darslik va mavzu nomini olishda xatolik:", error);
-    }
-};
-
-const selected = computed(() => {
-    return tests.value.filter(test => test.is_selected).length === tests.value.length;
-});
-
-const calculate = computed(() => () => {
-    let all = tests.value.length;
-    let selected = tests.value.filter((test) => test.is_selected).length;
-    let correct = tests.value.filter(test => test.is_solved).length;
+const calculate = computed(() => {
+    let all = questions.value.length;
+    let selected = questions.value.filter((test) => test.is_selected).length;
+    let correct = questions.value.filter(test => test.is_solved).length;
     let incorrect = all - correct;
     return { all, correct, incorrect, selected };
 });
 
 
+const getResultMeta = async () => {
+    try {
+        const classesResponse = await $fetch<IClass[]>("https://astrontest.uz/mobile-api/api/uz/classesuz?lang=uz", {
+            method: "POST",
+            body: JSON.stringify({
+                token: token.value,
+                subjectid: route.params.subjectid,
+            }),
+            headers: {
+                "Content-Type": "application/json",
+            }
+        });
+
+        const currentClass = classesResponse.find(
+            (klass) => String(klass.classes_id) === String(route.params.classid)
+        );
+
+        className.value = currentClass?.classes_name ?? "";
+    } catch (error) {
+        console.error("Darslik nomini olishda xatolik:", error);
+    }
+};
+
+
 definePageMeta({
     middleware: [
-        "get-subjects",
         "is-telegram",
+        "get-subjects",
     ],
 });
 
 onMounted(() => {
-    getTests();
+    getMixedTests();
     getResultMeta();
     isLoading.value = false;
 });
@@ -193,7 +158,7 @@ onMounted(() => {
                 <div class="border rounded-full p-1" @click="router.back()">
                     <LucideChevronLeft />
                 </div>
-                <p>Test</p>
+                <p>Nazorat testi</p>
             </div>
             <div>
                 <Drawer>
@@ -206,36 +171,36 @@ onMounted(() => {
                             <DrawerDescription></DrawerDescription>
                         </DrawerHeader>
                         <div class="grid items-center justify-center gap-2 w-full">
-                            <p class="text-end text-muted-foreground">{{ new Date().toLocaleDateString("uz-UZ") }}</p>
-                            <p v-if="className"
-                                class="w-full text-center text-base font-semibold leading-snug whitespace-normal break-words px-2">
+                            <p class="text-end text-muted-foreground">
+                                {{ new Date().toLocaleDateString("en-GB").replace(/\//g, '/') }}
+                            </p>
+                            <p v-if="className" class="w-full text-center text-base font-semibold leading-snug whitespace-normal break-words px-2">
                                 {{ className }}
                             </p>
-                            <p v-if="themeName"
-                                class="w-full text-center text-base font-normal leading-snug whitespace-normal break-words px-2">
-                                {{ themeName }}
+                            <p class="w-full text-center text-base font-normal leading-snug whitespace-normal break-words px-2">
+                                Nazorat testi (Darslik bo'yicha)
                             </p>
                             <div class="flex flex-col gap-1 items-center justify-center bg-accent/50 p-2 rounded-md">
                                 <div class="flex items-center gap-1">
-                                    <p>Umumiy: {{ calculate().all }} ta</p>
+                                    <p>Umumiy: {{ calculate.all }} ta</p>
                                     <Separator class="h-8" orientation="vertical" />
-                                    <p>Belgilangan: {{ calculate().selected }} ta</p>
+                                    <p>Belgilangan: {{ calculate.selected }} ta</p>
                                 </div>
                                 <div class="flex items-center gap-1">
-                                    <p>To'g'ri javob: {{ calculate().correct }} ta</p>
+                                    <p>To'g'ri javob: {{ calculate.correct }} ta</p>
                                     <Separator class="h-8" orientation="vertical" />
-                                    <p>Foiz: {{ isNaN(Math.ceil((calculate().correct / calculate().selected) * 100)) ? 0
-                                        : Math.ceil((calculate().correct / calculate().selected) * 100) }}%</p>
+                                    <p>Foiz: {{ isNaN(Math.ceil((calculate.correct / calculate.selected) * 100)) ? 0
+                                        : Math.ceil((calculate.correct / calculate.selected) * 100) }}%</p>
                                 </div>
                             </div>
                             <p class="w-full font-bold text-center my-2 p-2 bg-red-500 rounded-full"
-                                v-if="(isNaN(Math.ceil((calculate().correct / calculate().selected) * 100)) ? 0 : Math.ceil((calculate().correct / calculate().selected) * 100)) < 60">
+                                v-if="(isNaN(Math.ceil((calculate.correct / calculate.selected) * 100)) ? 0 : Math.ceil((calculate.correct / calculate.selected) * 100)) < 60">
                                 Qoniqarsiz</p>
                             <p class="w-full font-bold text-center my-2 p-2 bg-orange-500 rounded-full"
-                                v-else-if="Math.ceil((calculate().correct / calculate().selected) * 100) < 80">Qoniqarli
+                                v-else-if="Math.ceil((calculate.correct / calculate.selected) * 100) < 80">Qoniqarli
                             </p>
                             <p class="w-full font-bold text-center my-2 p-2 bg-green-300 rounded-full"
-                                v-else-if="Math.ceil((calculate().correct / calculate().selected) * 100) < 99">Yaxshi
+                                v-else-if="Math.ceil((calculate.correct / calculate.selected) * 100) < 99">Yaxshi
                             </p>
                             <p class="w-full font-bold text-center my-2 p-2 bg-green-500 rounded-full" v-else>A'lo</p>
                         </div>
@@ -247,7 +212,7 @@ onMounted(() => {
             <ScrollArea class="h-full">
                 <br>
                 <div class="flex flex-col gap-3">
-                    <div v-for="test, index in tests" class="bg-accent/30 rounded-md p-2">
+                    <div v-for="test, index in questions" class="bg-accent/30 rounded-md p-2">
                         <p class="text-lg">{{ index + 1 }}. {{ test.savol_nomi }}</p>
                         <div class="flex items-center justify-center">
                             <Dialog>

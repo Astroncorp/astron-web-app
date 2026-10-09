@@ -4,13 +4,11 @@ import { useMiniApp } from 'vue-tg';
 export default defineNuxtRouteMiddleware((to, from) => {
     try {
         const miniApp = useMiniApp();
-        const router = useRouter();
-        
+
         if (miniApp.platform === "unknown") {
-            router.push({ name: "scan" });
+			navigateTo("https://t.me/astrontest_bot?startapp", { external: true })
         }
     } catch {
-        const router = useRouter();
-        router.push({ name: "scan" });
+        navigateTo("https://t.me/astrontest_bot?startapp", { external: true })
     }
 });
