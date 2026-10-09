@@ -31,7 +31,7 @@ const openTestSubject = (subjectId: number) => {
 		void fetch("https://backend.astron.uz/api/v1/subject-visit/", {
 			method: "POST",
 			headers: { "Content-Type": "application/json" },
-			body: JSON.stringify({ subject_id: subjectId }),
+			body: JSON.stringify({ subject_id: Number(subjectId) }),
 			keepalive: true,
 		}).catch(() => {});
 	} catch (_) {
