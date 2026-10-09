@@ -30,7 +30,7 @@ const openTestSubject = (subjectId: number) => {
 	try {
 		void fetch("https://backend.astron.uz/api/v1/subject-visit/", {
 			method: "POST",
-			headers: { "Content-Type": "text/plain" },
+			headers: { "Content-Type": "application/json" },
 			body: JSON.stringify({ subject_id: subjectId }),
 			keepalive: true,
 		}).catch(() => {});
@@ -100,7 +100,7 @@ onMounted(async () => {
 						to="https://t.me/tarix_repetitor_astron"
 						>Kanalga obuna bo'lish</NuxtLink
 					>
-					<p class="italic text-sm text-center">
+					<p class="italic text-sm">
 						Eslatma: Kanalga obuna bo'lgandan keyin ilovadan chiqib,
 						qaytadan kiring.
 					</p>
