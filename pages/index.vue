@@ -9,6 +9,7 @@ import {
 	LucideRefreshCw,
 	LucideBell,
 	LucideShare,
+	LucideUsers,
 } from "lucide-vue-next";
 import { toast } from "vue-sonner";
 import { useMiniApp } from "vue-tg";
@@ -150,13 +151,13 @@ const shareApp = () => {
 };
 
 
-const openDonation = () => {
-	const donationUrl = "https://taps.uz/tarix_repetitor_astron";
+const openHistoryGroup = () => {
+	const groupUrl = "https://t.me/tapsuzbot/app?startapp=c1e3c39d";
 
 	if (window.Telegram?.WebApp) {
-		window.Telegram.WebApp.openLink(donationUrl);
+		window.Telegram.WebApp.openTelegramLink(groupUrl);
 	} else {
-		window.open(donationUrl, "_blank");
+		window.open(groupUrl, "_blank");
 	}
 };
 </script>
@@ -309,32 +310,10 @@ const openDonation = () => {
 					</div>
 				</div>
 
-				<div class="flex justify-between p-3" @click="openDonation">
+				<div class="flex justify-between p-3" @click="openHistoryGroup">
 					<div class="flex items-center gap-2">
-						<svg
-							width="20"
-							height="20"
-							viewBox="0 0 24 24"
-							fill="none"
-							xmlns="http://www.w3.org/2000/svg"
-							aria-hidden="true"
-						>
-							<circle
-								cx="12"
-								cy="12"
-								r="9"
-								stroke="currentColor"
-								stroke-width="2"
-							/>
-							<path
-								d="M12 6V18M15 8.2C14.3 7.5 13.3 7 12 7C10.3 7 9 7.9 9 9.2C9 10.7 10.2 11.3 12 11.8C13.8 12.3 15 12.9 15 14.4C15 15.8 13.7 17 12 17C10.6 17 9.5 16.5 8.7 15.7"
-								stroke="currentColor"
-								stroke-width="2"
-								stroke-linecap="round"
-								stroke-linejoin="round"
-							/>
-						</svg>
-						<p>Donat yuborish</p>
+						<LucideUsers :size="20" />
+						<p>Ehtimoliy guruh|Tarix</p>
 					</div>
 					<div class="flex items-center justify-center">
 						<LucideChevronRight />
