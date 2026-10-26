@@ -310,12 +310,12 @@ const openHistoryGroup = () => {
 					</div>
 				</div>
 
-				<div class="flex justify-between p-3" @click="openHistoryGroup">
-					<div class="flex items-center gap-2">
-						<LucideUsers :size="20" />
-						<p>Ehtimoliy guruh|Tarix</p>
+				<div class="flex justify-between items-center gap-2 p-3" @click="openHistoryGroup">
+					<div class="flex items-center gap-2 min-w-0">
+						<LucideUsers :size="20" class="shrink-0" />
+						<p class="min-w-0 whitespace-normal break-words">Ehtimoliy ma'lumotlar guruhi|Tarix</p>
 					</div>
-					<div class="flex items-center justify-center">
+					<div class="flex shrink-0 items-center justify-center">
 						<LucideChevronRight />
 					</div>
 				</div>
