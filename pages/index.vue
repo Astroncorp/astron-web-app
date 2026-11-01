@@ -192,7 +192,7 @@ const openHistoryGroup = () => {
 					<NuxtLink
 						class="w-full"
 						:class="buttonVariants({ variant: 'default' })"
-						to="https://t.me/astron_onlayn_test"
+						@click="miniApp.openTelegramLink('https://t.me/astron_onlayn_test')"
 						>Kanalga obuna bo'lish</NuxtLink
 					>
 					<p>
