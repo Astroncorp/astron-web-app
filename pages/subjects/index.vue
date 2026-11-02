@@ -100,7 +100,7 @@ onMounted(async () => {
 						to="https://t.me/astron_onlayn_test"
 						>Kanalga obuna bo'lish</NuxtLink
 					>
-					<p class="italic text-sm">
+					<p class="italic text-sm text-center">
 						Eslatma: Kanalga obuna bo'lgandan keyin ilovadan chiqib,
 						qaytadan kiring.
 					</p>
