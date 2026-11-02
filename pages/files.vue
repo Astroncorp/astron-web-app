@@ -120,7 +120,7 @@ onMounted(async () => {
 		code: string;
 		data: string;
 	}>(
-		`https://bot.astron.uz/is-chat-member/?user_id=${miniApp.initDataUnsafe.user?.id}&chat_id=@tarix_repetitor_astron`,
+		`https://bot.astron.uz/is-chat-member/?user_id=${miniApp.initDataUnsafe.user?.id}&chat_id=@astron_onlayn_test`,
 	);
 	status.value = response1.data;
 	isWaiting.value = false;
@@ -149,7 +149,7 @@ onMounted(async () => {
 					<NuxtLink
 						class="w-full"
 						:class="buttonVariants({ variant: 'default' })"
-						to="https://t.me/tarix_repetitor_astron"
+						to="https://t.me/astron_onlayn_test"
 						>Kanalga obuna bo'lish</NuxtLink
 					>
 					<p class="italic text-sm text-center">
