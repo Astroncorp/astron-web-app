@@ -48,7 +48,7 @@ onMounted(() => {
 </script>
 
 <template>
-	<div class="h-screen w-full">
+	<div class="h-screen w-full flex flex-col">
 		<div
 			class="sticky top-0 z-50 bg-background flex items-center gap-2 h-[3rem] p-2 border-b"
 		>
@@ -57,7 +57,7 @@ onMounted(() => {
 			</div>
 			<p>Sinflar</p>
 		</div>
-		<div class="h-[calc(100%-3rem)] flex flex-col gap-2 p-5">
+		<div class="flex-1 min-h-0 overflow-y-auto flex flex-col gap-2 p-5">
 			<br />
 			<div class="bg-accent/30 rounded-md divide-y">
 				<div v-for="klass in classes" class="flex justify-between p-2 cursor-pointer"
@@ -150,6 +150,18 @@ onMounted(() => {
 				</div>
 			</div>
 			<br />
+		</div>
+		<div
+			v-if="$route.query.type === 'test'"
+			class="shrink-0 bg-background flex items-center justify-center gap-2 h-[3rem] p-2 border-t"
+		>
+			<Button
+				variant="outline"
+				@click="navigateTo({ name: 'subjects-subjectid-mixedsubject', params: { subjectid: route.params.subjectid }, query: $route.query })"
+			>
+				<p>Nazorat testi (Fan bo‘yicha)</p>
+				<LucideChevronRight class="h-4 w-4" />
+			</Button>
 		</div>
 	</div>
 </template>
