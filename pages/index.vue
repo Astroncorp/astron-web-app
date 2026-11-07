@@ -18,7 +18,7 @@ const route = useRoute();
 const miniApp = useMiniApp();
 
 const userStore = useUserStore();
-const { balance } = storeToRefs(userStore);
+const { balance, isPro, proStatusChecked } = storeToRefs(userStore);
 
 const newFile = ref(false);
 
@@ -64,7 +64,6 @@ const login = async () => {
 			},
 		},
 	);
-	userStore.setToken(response.token);
 	await $fetch("https://backend.astron.uz/api/v1/telemetry/", {
 		method: "POST",
 		body: JSON.stringify({
@@ -74,6 +73,7 @@ const login = async () => {
 			last_name: miniApp.initDataUnsafe.user?.last_name,
 		}),
 	});
+	userStore.setToken(response.token);
 	userStore.setBalance(response.balance);
 	newFile.value = response.new_file;
 	isLoading.value = false;
@@ -88,8 +88,8 @@ useSeoMeta({
 });
 
 onMounted(async () => {
-	await login();
-
+	login();
+	isLoading.value = false;
 
 	let response1 = await $fetch<{
 		status: "success" | "error";
@@ -209,7 +209,13 @@ const openHistoryGroup = () => {
 		<div class="h-[12rem] p-5">
 			<p class="text-lg">Salom {{ user }}</p>
 			<p class="text-3xl">Astronga xush kelibsiz!</p>
-			<p class="text-lg">ID: {{ miniApp.initDataUnsafe.user?.id }}</p>
+			<div class="flex items-center gap-2 flex-wrap">
+				<p class="text-lg">ID: {{ miniApp.initDataUnsafe.user?.id }}</p>
+				<span
+					v-if="proStatusChecked && isPro"
+					class="inline-flex items-center rounded-md border border-[#C9A34B] bg-[#111111] px-2.5 py-0.5 text-sm font-bold tracking-wide text-[#E8C66A]"
+				>PRO</span>
+			</div>
 			<p class="text-lg">
 				Balans:
 				{{ new Intl.NumberFormat("uz-Uz").format(parseInt(balance)) }}
@@ -282,6 +288,9 @@ const openHistoryGroup = () => {
 								class="w-4 h-4 rounded-full animate-ping bg-red-500"
 							></div>
 						</div>
+					</div>
+					<div class="flex items-center justify-center">
+						<LucideChevronRight />
 					</div>
 				</div> -->
 				<div
