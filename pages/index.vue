@@ -64,6 +64,7 @@ const login = async () => {
 			},
 		},
 	);
+	userStore.setToken(response.token);
 	await $fetch("https://backend.astron.uz/api/v1/telemetry/", {
 		method: "POST",
 		body: JSON.stringify({
@@ -73,7 +74,6 @@ const login = async () => {
 			last_name: miniApp.initDataUnsafe.user?.last_name,
 		}),
 	});
-	userStore.setToken(response.token);
 	userStore.setBalance(response.balance);
 	newFile.value = response.new_file;
 	isLoading.value = false;
@@ -88,8 +88,8 @@ useSeoMeta({
 });
 
 onMounted(async () => {
-	login();
-	isLoading.value = false;
+	await login();
+
 
 	let response1 = await $fetch<{
 		status: "success" | "error";
@@ -282,9 +282,6 @@ const openHistoryGroup = () => {
 								class="w-4 h-4 rounded-full animate-ping bg-red-500"
 							></div>
 						</div>
-					</div>
-					<div class="flex items-center justify-center">
-						<LucideChevronRight />
 					</div>
 				</div> -->
 				<div
