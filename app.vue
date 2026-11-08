@@ -3,7 +3,8 @@ import { Toaster } from "@/components/ui/sonner";
 import { useUserStore } from "@/stores/user";
 import { storeToRefs } from "pinia";
 
-// PRO tekshiruvi Loading Gate va Yandex Ads dan mustaqil ishlaydi.
+// Kirishda PRO tekshiruvi: kamida 2, ko'pi bilan 5 soniya.
+// Token index.vue ichida olinadi; NuxtPage tekshiruv vaqtida ham mount bo'ladi.
 const userStore = useUserStore();
 const { token } = storeToRefs(userStore);
 
@@ -34,13 +35,38 @@ function isValidProResponse(value: unknown): value is ProStatusResponse {
   );
 }
 
+const showProCheck = ref(false);
+let isDestroyed = false;
+let entryDecided = false;
+let checkStartedAt = 0;
 let proStatusController: AbortController | null = null;
-let proStatusRequestId = 0;
+let minimumTimer: ReturnType<typeof setTimeout> | null = null;
+let maximumTimer: ReturnType<typeof setTimeout> | null = null;
 
-async function checkProStatusInBackground(userToken: string, requestId: number) {
+function finishEntry(isPro: boolean) {
+  if (isDestroyed || entryDecided) return;
+  entryDecided = true;
+  if (minimumTimer) clearTimeout(minimumTimer);
+  if (maximumTimer) clearTimeout(maximumTimer);
+  minimumTimer = null;
+  maximumTimer = null;
+  proStatusController?.abort();
+  proStatusController = null;
+  showProCheck.value = false;
+
+  if (!isPro) startRegularEntry();
+}
+
+function finishAfterMinimum(isPro: boolean) {
+  if (isDestroyed || entryDecided) return;
+  const remaining = Math.max(0, 2000 - (performance.now() - checkStartedAt));
+  if (remaining === 0) finishEntry(isPro);
+  else minimumTimer = setTimeout(() => finishEntry(isPro), remaining);
+}
+
+async function checkProStatus(userToken: string) {
   const controller = new AbortController();
   proStatusController = controller;
-  const timeout = setTimeout(() => controller.abort(), 8000);
 
   try {
     const response = await fetch(
@@ -53,36 +79,26 @@ async function checkProStatusInBackground(userToken: string, requestId: number) 
         signal: controller.signal,
       },
     );
-
     if (!response.ok) throw new Error(`PRO API HTTP ${response.status}`);
-
     const data: unknown = await response.json();
     if (!isValidProResponse(data)) throw new Error("Invalid PRO API response");
+    if (isDestroyed || entryDecided || token.value !== userToken) return;
 
-    // Eskirgan javob yangi foydalanuvchi holatini o'zgartirmasin.
-    if (!isDestroyed && requestId === proStatusRequestId && token.value === userToken) {
-      userStore.setProStatus(data);
-    }
-  } catch (error) {
-    // Xatolik WebApp ochilishiga ta'sir qilmaydi. PRO huquqlari tasdiqlanmaydi.
-    if (!isDestroyed && requestId === proStatusRequestId && token.value === userToken) {
-      userStore.resetProStatus();
-      console.warn("PRO statusini fon rejimida tekshirish amalga oshmadi.");
-    }
-  } finally {
-    clearTimeout(timeout);
-    if (proStatusController === controller) proStatusController = null;
+    userStore.setProStatus(data);
+    finishAfterMinimum(data.is_pro);
+  } catch {
+    if (isDestroyed || entryDecided || token.value !== userToken) return;
+    userStore.resetProStatus();
+    console.warn("PRO status tekshiruvi amalga oshmadi; odatiy kirish davom etadi.");
+    finishAfterMinimum(false);
   }
 }
-
 
 // Mavjud Loading Gate: barcha foydalanuvchilar uchun.
 const showLoadingGate = ref(false);
 const loadingProgress = ref(0);
 
 let progressTimer: ReturnType<typeof setInterval> | null = null;
-let isDestroyed = false;
-
 function startRegularEntry() {
   if (isDestroyed) return;
 
@@ -133,31 +149,38 @@ function startRegularEntry() {
 }
 
 onMounted(() => {
-  // Loading Gate va reklama PRO natijasini kutmasdan ishga tushadi.
-  startRegularEntry();
+  userStore.resetProStatus();
+  checkStartedAt = performance.now();
+  showProCheck.value = true;
+
+  // 5 soniya tokenni olish va API javobi uchun umumiy limit.
+  maximumTimer = setTimeout(() => {
+    if (entryDecided || isDestroyed) return;
+    userStore.resetProStatus();
+    finishEntry(false);
+  }, 5000);
+
+  // Token index.vue da kelishi bilan tekshiruv boshlanadi.
+  // Timeoutdan keyin qayta tekshirish avtomatik ishga tushmaydi.
+  if (token.value) void checkProStatus(token.value);
 });
 
-// Token index.vue da olingach, PRO tekshiruvi alohida boshlanadi.
-watch(
-  token,
-  (newToken) => {
-    proStatusRequestId++;
-    proStatusController?.abort();
-    proStatusController = null;
-    userStore.resetProStatus();
-
-    if (isDestroyed || !newToken) return;
-    void checkProStatusInBackground(newToken, proStatusRequestId);
-  },
-  { immediate: true },
-);
+watch(token, (newToken, oldToken) => {
+  if (isDestroyed || entryDecided || !showProCheck.value) return;
+  if (newToken === oldToken) return;
+  proStatusController?.abort();
+  proStatusController = null;
+  if (minimumTimer) clearTimeout(minimumTimer);
+  minimumTimer = null;
+  userStore.resetProStatus();
+  if (newToken) void checkProStatus(newToken);
+});
 
 onBeforeUnmount(() => {
   isDestroyed = true;
-  proStatusRequestId++;
   proStatusController?.abort();
-  proStatusController = null;
-
+  if (minimumTimer) clearTimeout(minimumTimer);
+  if (maximumTimer) clearTimeout(maximumTimer);
   if (progressTimer) {
     clearInterval(progressTimer);
     progressTimer = null;
@@ -181,6 +204,14 @@ onBeforeUnmount(() => {
     </NuxtLayout>
 
     <ClientOnly>
+      <!-- PRO status tekshiruvi: ilova fonida yuklanishda davom etadi -->
+      <div v-if="showProCheck" class="loading-gate" aria-live="polite">
+        <div class="loading-gate__content">
+          <div class="loading-gate__title">PRO status tekshirilmoqda...</div>
+          <div class="pro-check__spinner" aria-hidden="true"></div>
+        </div>
+      </div>
+
       <!-- Mavjud Loading Gate -->
       <div v-if="showLoadingGate" class="loading-gate">
         <div class="loading-gate__content">
@@ -258,5 +289,18 @@ onBeforeUnmount(() => {
   font-size: 16px;
   font-weight: 500;
   line-height: 1.2;
+}
+
+.pro-check__spinner {
+  width: 32px;
+  height: 32px;
+  margin: 18px auto 0;
+  border: 3px solid #e6e6e6;
+  border-top-color: #333333;
+  border-radius: 50%;
+  animation: pro-check-spin 0.8s linear infinite;
+}
+@keyframes pro-check-spin {
+  to { transform: rotate(360deg); }
 }
 </style>
