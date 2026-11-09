@@ -39,49 +39,6 @@ const subjectName = computed(() => {
 const loadError = ref("");
 
 
-const YANDEX_RESULT_BLOCK_ID = "R-A-19395198-4";
-const YANDEX_LOADER_SRC = "https://yandex.ru/ads/system/context.js";
-
-const ensureYandexLoader = () => {
-    if (typeof window === "undefined") return;
-
-    const w = window as any;
-    w.yaContextCb = w.yaContextCb || [];
-
-    if (document.querySelector(`script[src="${YANDEX_LOADER_SRC}"]`)) return;
-
-    const script = document.createElement("script");
-    script.src = YANDEX_LOADER_SRC;
-    script.async = true;
-    document.head.appendChild(script);
-};
-
-const showResultAd = () => {
-    if (typeof window === "undefined") return;
-
-    try {
-        ensureYandexLoader();
-
-        const w = window as any;
-        w.yaContextCb = w.yaContextCb || [];
-
-        w.yaContextCb.push(() => {
-            try {
-                w.Ya.Context.AdvManager.render({
-                    blockId: YANDEX_RESULT_BLOCK_ID,
-                    type: "fullscreen",
-                    platform: "touch",
-                });
-            } catch (error) {
-                console.error("Yandex fullscreen reklamasini chaqirishda xatolik:", error);
-            }
-        });
-    } catch (error) {
-        console.error("Yandex reklama yuklagichida xatolik:", error);
-    }
-};
-
-
 const getMixedTests = async () => {
     isLoading.value = true;
     loadError.value = "";
@@ -149,7 +106,7 @@ onMounted(() => {
             <div>
                 <Drawer>
                     <DrawerTrigger as-child>
-                        <Button size="sm" @click="showResultAd">Natija</Button>
+                        <Button size="sm">Natija</Button>
                     </DrawerTrigger>
                     <DrawerContent class="h-3/4 p-5 overflow-y-auto">
                         <DrawerHeader>
