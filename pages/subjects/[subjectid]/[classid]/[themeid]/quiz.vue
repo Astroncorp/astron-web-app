@@ -18,7 +18,8 @@ const router = useRouter();
 const userStore = useUserStore();
 const subjectsStore = useSubjectsStore();
 
-const { token } = storeToRefs(userStore);
+const { token, proPermissions } = storeToRefs(userStore);
+const showAds = computed(() => proPermissions.value.show_ads);
 
 const isLoading = ref(true);
 const quizzes = ref<IQuiz[]>([]);
@@ -100,7 +101,7 @@ definePageMeta({
 onMounted(() => {
     getQuizzes();
     isLoading.value = false;
-    loadYandexAds();
+    if (showAds.value) loadYandexAds();
 });
 </script>
 
@@ -147,7 +148,7 @@ onMounted(() => {
                 </div>
                 <br>
             </ScrollArea>
-            <div class="w-full h-[190px] shrink-0 overflow-hidden bg-background">
+            <div v-if="showAds" class="w-full h-[190px] shrink-0 overflow-hidden bg-background">
                 <div id="yandex_rtb_R-A-19395198-5"></div>
             </div>
         </div>
