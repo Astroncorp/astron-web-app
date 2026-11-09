@@ -15,7 +15,21 @@ const router = useRouter();
 
 const userStore = useUserStore();
 
-const { token } = storeToRefs(userStore);
+const { token, proPermissions } = storeToRefs(userStore);
+const showProReminder = ref(false);
+
+const openMixedSubjectTest = () => {
+	if (!proPermissions.value.access_mixedsubject_test) {
+		showProReminder.value = true;
+		return;
+	}
+
+	navigateTo({
+		name: "subjects-subjectid-mixedsubject",
+		params: { subjectid: route.params.subjectid },
+		query: route.query,
+	});
+};
 
 const isLoading = ref(true);
 const classes = ref<IClass[]>([]);
@@ -157,11 +171,24 @@ onMounted(() => {
 		>
 			<Button
 				variant="outline"
-				@click="navigateTo({ name: 'subjects-subjectid-mixedsubject', params: { subjectid: route.params.subjectid }, query: $route.query })"
+				@click="openMixedSubjectTest"
 			>
 				<p>Nazorat testi (Fan bo‘yicha)</p>
 				<LucideChevronRight class="h-4 w-4" />
 			</Button>
 		</div>
+		<Dialog v-model:open="showProReminder">
+			<DialogContent class="w-[calc(100%-96px)] max-w-sm rounded-none bg-white p-5 text-black">
+				<DialogHeader>
+					<DialogTitle class="text-center text-base font-semibold text-black">Eslatma</DialogTitle>
+					<DialogDescription class="sr-only">PRO obunasi haqida eslatma</DialogDescription>
+				</DialogHeader>
+				<div class="space-y-4 text-center text-base leading-relaxed">
+					<p>Ushbu funksiyadan foydalanish uchun "PRO" statusini faollashtiring.</p>
+					<p class="italic">"PRO" obunasi oyiga - 25 000 so‘m</p>
+					<p class="italic">Faollashtirish uchun adminga murojaat qiling</p>
+				</div>
+			</DialogContent>
+		</Dialog>
 	</div>
 </template>
