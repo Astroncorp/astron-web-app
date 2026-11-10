@@ -130,22 +130,36 @@ function startRegularEntry() {
   updateLoadingProgress();
   progressTimer = setInterval(updateLoadingProgress, 100);
 
-  // Mavjud Yandex reklama mexanizmi (o'zgartirilmagan).
+  // Yandex fullscreen: mavjud format va chaqirish vaqti saqlangan.
+  // Faqat noto'g'ri shart olib tashlanib, xatolar va render hodisasi kuzatiladi.
   window.yaContextCb = window.yaContextCb || [];
+  window.yaContextCb.push(() => {
+    try {
+      if (
+        typeof Ya === "undefined" ||
+        typeof Ya.Context?.AdvManager?.render !== "function"
+      ) {
+        console.warn("[Astron Yandex Ads] AdvManager mavjud emas");
+        return;
+      }
 
-  if (
-    window.yaContextCb ||
-    window.yaContextCb !== null ||
-    window.yaContextCb !== undefined
-  ) {
-    window.yaContextCb.push(() => {
       Ya.Context.AdvManager.render({
         blockId: "R-A-19395198-2",
         type: "fullscreen",
         platform: "touch",
+        onError: (data: { type?: string; code?: string; text?: string }) => {
+          console.warn("[Astron Yandex Ads] onError:", data.type, data.code, data.text);
+        },
+        // Yandex hujjatlariga ko'ra onRender eng oxirgi parametr bo'lishi kerak.
+        onRender: (data: { product?: string }) => {
+          console.info("[Astron Yandex Ads] onRender:", data.product);
+        },
       });
-    });
-  }
+    } catch (error) {
+      // Sinxron xatolik ham WebApp kirish jarayonini to'xtatmasin.
+      console.error("[Astron Yandex Ads] render xatosi:", error);
+    }
+  });
 }
 
 onMounted(() => {
