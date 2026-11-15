@@ -42,7 +42,7 @@ onMounted(() => {
 
 			<Separator />
 			<p class="text-xl font-bold">Karta orqali to'lov qilish:</p>
-			<span class="font-bold font-mono">9860 0101 3465 0976</span>
+			<span class="font-bold font-mono">9860 1606 3300 9842</span>
 			<span class="text-sm">(I. Yo'ldashev)</span>
 			<span>
 				Chekni
