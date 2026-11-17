@@ -27,6 +27,11 @@ const announcement = ref("");
 const created = ref("");
 const status = ref("");
 const isWaiting = ref(true);
+const channelRecommendation = ref<{
+	id: number;
+	content: string;
+	post_url: string;
+} | null>(null);
 
 miniApp.ready();
 
@@ -79,6 +84,66 @@ const login = async () => {
 	isLoading.value = false;
 };
 
+const loadChannelRecommendation = async () => {
+	const userId = miniApp.initDataUnsafe.user?.id;
+	if (!userId) return;
+
+	try {
+		const response = await $fetch<{
+			id: number | null;
+			content: string | null;
+			post_url: string | null;
+		}>("https://backend.astron.uz/api/v1/channel-recommendation/", {
+			query: { user_id: String(userId) },
+		});
+
+		if (
+			typeof response.id === "number" &&
+			response.content &&
+			response.post_url
+		) {
+			channelRecommendation.value = {
+				id: response.id,
+				content: response.content,
+				post_url: response.post_url,
+			};
+		}
+	} catch (error) {
+		console.error("Kanaldan tavsiyani yuklashda xatolik:", error);
+	}
+};
+
+const dismissChannelRecommendation = (openPost: boolean) => {
+	const recommendation = channelRecommendation.value;
+	const userId = miniApp.initDataUnsafe.user?.id;
+	if (!recommendation || !userId) return;
+
+	channelRecommendation.value = null;
+
+	// Saqlashni kutmasdan Telegram havolasini foydalanuvchi bosgan paytda ochamiz.
+	void $fetch("https://backend.astron.uz/api/v1/channel-recommendation/dismiss/", {
+		method: "POST",
+		body: {
+			user_id: String(userId),
+			recommendation_id: recommendation.id,
+		},
+		keepalive: true,
+	}).catch((error) => {
+		console.error("Kanaldan tavsiya holatini saqlashda xatolik:", error);
+	});
+
+	if (openPost) {
+		if (
+			window.Telegram?.WebApp &&
+			/^https:\/\/t\.me\//i.test(recommendation.post_url)
+		) {
+			window.Telegram.WebApp.openTelegramLink(recommendation.post_url);
+		} else {
+			window.open(recommendation.post_url, "_blank", "noopener,noreferrer");
+		}
+	}
+};
+
 definePageMeta({
 	middleware: ["is-telegram", "get-subjects"],
 });
@@ -88,7 +153,9 @@ useSeoMeta({
 });
 
 onMounted(async () => {
-	login();
+	void login().catch((error) => {
+		console.error("Foydalanuvchini yuklashda xatolik:", error);
+	}).then(loadChannelRecommendation);
 	isLoading.value = false;
 
 	let response1 = await $fetch<{
@@ -334,6 +401,62 @@ const openHistoryGroup = () => {
 					<LucideBell class="text-orange-500 animate-bounce" />
 				</div>
 				<div v-html="announcement"></div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Faqat WebApp bosh sahifasida chiqadigan umumiy xabar. -->
+	<div
+		v-if="channelRecommendation && !isLoading"
+		class="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 px-1"
+		role="dialog"
+		aria-modal="true"
+		aria-labelledby="channel-recommendation-title"
+	>
+		<div class="w-full max-w-[360px] rounded-2xl bg-white p-3 text-black shadow-xl">
+			<div class="flex items-center justify-between gap-3 pb-3">
+				<div class="flex min-w-0 items-center gap-2">
+					<svg
+						width="18"
+						height="20"
+						viewBox="0 0 24 28"
+						fill="none"
+						aria-hidden="true"
+						class="shrink-0"
+					>
+						<path
+							d="M12 1C13.4 1 14.5 2.1 14.5 3.5V3.8C18.6 4.9 21.6 8.6 21.6 13V19.6L24 22.1V23H0V22.1L2.4 19.6V13C2.4 8.6 5.4 4.9 9.5 3.8V3.5C9.5 2.1 10.6 1 12 1Z"
+							fill="#EF4444"
+						/>
+						<path d="M8.2 25H15.8C15.3 27 13.8 28 12 28C10.2 28 8.7 27 8.2 25Z" fill="#EF4444" />
+					</svg>
+					<span id="channel-recommendation-title" class="text-base font-bold">
+						Muhim xabar
+					</span>
+				</div>
+				<button
+					type="button"
+					class="flex h-6 w-6 shrink-0 items-center justify-center text-lg leading-none text-gray-500"
+					aria-label="Xabarni yopish"
+					@click="dismissChannelRecommendation(false)"
+				>
+					×
+				</button>
+			</div>
+			<div class="border-t border-gray-200 pt-3">
+				<p class="whitespace-pre-wrap break-words text-sm leading-6">
+					{{ channelRecommendation.content }}
+				</p>
+				<button
+					type="button"
+					class="mt-3 flex h-[46px] w-full items-center justify-center gap-2 rounded-lg bg-[#229ED9] text-sm font-semibold text-white"
+					@click="dismissChannelRecommendation(true)"
+				>
+					<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+						<path d="M21.6 3.4L2.8 10.7C1.5 11.2 1.5 11.9 2.6 12.2L7.5 13.7L18.9 6.5C19.4 6.2 19.9 6.4 19.5 6.8L10.3 15.1L10 19.9C10.5 19.9 10.7 19.7 11 19.4L13.4 17.1L18.4 20.8C19.3 21.3 20 21 20.2 20L23.3 5C23.6 3.7 22.8 3 21.6 3.4Z" />
+					</svg>
+					Postni o‘qish
+				</button>
 			</div>
 		</div>
 	</div>
