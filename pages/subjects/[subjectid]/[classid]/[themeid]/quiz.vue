@@ -37,9 +37,19 @@ const loadYandexAds = () => {
             window.yaContextCb = window.yaContextCb || [];
             window.yaContextCb.push(() => {
                 try {
+                    // Telegram Mini App foydalanuvchi IDsi: fullscreen bilan bir xil manba.
+                    const telegramUserId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+                    const tgUid =
+                        typeof telegramUserId === "number" &&
+                        Number.isSafeInteger(telegramUserId) &&
+                        telegramUserId > 0
+                            ? String(telegramUserId)
+                            : undefined;
+
                     Ya.Context.AdvManager.render({
                         blockId: YANDEX_BANNER_BLOCK_ID,
                         renderTo: YANDEX_BANNER_RENDER_TO,
+                        ...(tgUid ? { tgUid } : {}),
                     });
                 } catch (error) {
                     console.error("Yandex banner render xatoligi:", error);
