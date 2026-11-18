@@ -143,10 +143,21 @@ function startRegularEntry() {
         return;
       }
 
+      // Telegram ID index.vue dagi miniApp.initDataUnsafe.user?.id bilan bir manbadan olinadi.
+      // Faqat haqiqiy, musbat ID bo'lsa Yandex'ga string sifatida uzatiladi.
+      const telegramUserId = window.Telegram?.WebApp?.initDataUnsafe?.user?.id;
+      const tgUid =
+        typeof telegramUserId === "number" &&
+        Number.isSafeInteger(telegramUserId) &&
+        telegramUserId > 0
+          ? String(telegramUserId)
+          : undefined;
+
       Ya.Context.AdvManager.render({
         blockId: "R-A-19395198-2",
         type: "fullscreen",
         platform: "touch",
+        ...(tgUid ? { tgUid } : {}),
         onError: (data: { type?: string; code?: string; text?: string }) => {
           console.warn("[Astron Yandex Ads] onError:", data.type, data.code, data.text);
         },
