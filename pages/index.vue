@@ -372,7 +372,8 @@ const shareApp = () => {
 						<LucideChevronRight />
 					</div>
 				</div>
-
+            </div>
+			
 			<div
 				v-if="announcement"
 				class="bg-orange-500/10 border border-orange-500 rounded-md p-3 flex items-center gap-2"
