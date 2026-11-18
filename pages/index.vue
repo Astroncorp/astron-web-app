@@ -217,16 +217,6 @@ const shareApp = () => {
 	}
 };
 
-
-const openHistoryGroup = () => {
-	const groupUrl = "https://t.me/tapsuzbot/app?startapp=c1e3c39d";
-
-	if (window.Telegram?.WebApp) {
-		window.Telegram.WebApp.openTelegramLink(groupUrl);
-	} else {
-		window.open(groupUrl, "_blank");
-	}
-};
 </script>
 
 <template>
@@ -383,16 +373,6 @@ const openHistoryGroup = () => {
 					</div>
 				</div>
 
-				<div class="flex justify-between items-center gap-2 p-3" @click="openHistoryGroup">
-					<div class="flex items-center gap-2 min-w-0">
-						<LucideUsers :size="20" class="shrink-0" />
-						<p class="min-w-0 whitespace-normal break-words">Ehtimoliy ma'lumotlar guruhi|Tarix</p>
-					</div>
-					<div class="flex shrink-0 items-center justify-center">
-						<LucideChevronRight />
-					</div>
-				</div>
-			</div>
 			<div
 				v-if="announcement"
 				class="bg-orange-500/10 border border-orange-500 rounded-md p-3 flex items-center gap-2"
