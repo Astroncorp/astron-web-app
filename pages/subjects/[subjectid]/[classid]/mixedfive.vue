@@ -271,6 +271,9 @@ definePageMeta({
                                 {{ themeName }}
                             </p>
                         </div>
+                        <p class="w-full min-w-0 max-w-full text-center text-base font-normal leading-snug whitespace-normal break-words px-2">
+                            Nazorat testi (Tanlangan mavzular bo‘yicha)
+                        </p>
                         <div class="flex flex-col gap-1 items-center justify-center bg-accent/50 p-2 rounded-md">
                             <div class="flex items-center gap-1">
                                 <p>Umumiy: {{ calculate.all }} ta</p>
