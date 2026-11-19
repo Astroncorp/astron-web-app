@@ -250,12 +250,13 @@ definePageMeta({
                 <DrawerTrigger as-child>
                     <Button size="sm">Natija</Button>
                 </DrawerTrigger>
-                <DrawerContent class="h-3/4 p-5 overflow-y-auto">
-                    <DrawerHeader>
+                <DrawerContent class="h-3/4 p-5 overflow-hidden">
+                    <DrawerHeader class="shrink-0">
                         <DrawerTitle></DrawerTitle>
                         <DrawerDescription></DrawerDescription>
                     </DrawerHeader>
-                    <div class="grid items-center justify-center gap-2 w-full">
+                    <div class="min-h-0 w-full flex-1 overflow-y-auto overscroll-contain pb-4">
+    <div class="grid items-center justify-center gap-2 w-full">
                         <p class="w-full text-end text-muted-foreground">
                             {{ new Date().toLocaleDateString("en-GB") }}
                         </p>
@@ -289,6 +290,7 @@ definePageMeta({
                         <p class="w-full font-bold text-center my-2 p-2 rounded-full" :class="resultGradeColor">
                             {{ resultGrade }}
                         </p>
+                    </div>
                     </div>
                 </DrawerContent>
             </Drawer>
