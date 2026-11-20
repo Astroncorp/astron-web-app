@@ -20,6 +20,52 @@ const userStore = useUserStore();
 
 const { token, balance } = storeToRefs(userStore);
 
+// Desktop fullscreen faqat Testlar sahifasi ochilib, kanal obunasi tasdiqlangach.
+// Mobil fullscreen app.vue ichida avvalgidek ishlashda davom etadi.
+const showDesktopFullscreen = () => {
+	if (
+		route.name !== "subjects" ||
+		route.query.type !== "test" ||
+		!userStore.proStatusChecked ||
+		userStore.isPro
+	) return;
+
+	const telegramUserId = miniApp.initDataUnsafe.user?.id;
+	if (
+		typeof telegramUserId !== "number" ||
+		!Number.isSafeInteger(telegramUserId) ||
+		telegramUserId <= 0
+	) return;
+
+	window.yaContextCb = window.yaContextCb || [];
+	window.yaContextCb.push(() => {
+		try {
+			if (
+				typeof Ya === "undefined" ||
+				typeof Ya.Context?.AdvManager?.render !== "function" ||
+				Ya.Context.AdvManager.getPlatform?.() !== "desktop"
+			) return;
+
+			console.info("[Astron Yandex Ads] desktop fullscreen request");
+			Ya.Context.AdvManager.render({
+				blockId: "R-A-19395198-6",
+				type: "fullscreen",
+				platform: "desktop",
+				tgUid: String(telegramUserId),
+				onError: (data: { type?: string; code?: string; text?: string }) => {
+					console.warn("[Astron Yandex Ads] desktop onError:", data.type, data.code, data.text);
+				},
+				// Yandex talabi: onRender oxirgi parametr bo'lishi kerak.
+				onRender: (data: { product?: string }) => {
+					console.info("[Astron Yandex Ads] desktop onRender:", data.product);
+				},
+			});
+		} catch (error) {
+			console.error("[Astron Yandex Ads] desktop render xatosi:", error);
+		}
+	});
+};
+
 definePageMeta({
 	middleware: ["is-telegram", "get-subjects"],
 });
@@ -73,6 +119,14 @@ onMounted(async () => {
 	);
 	status.value = response1.data;
 	isWaiting.value = false;
+	if (
+		status.value === "member" ||
+		status.value === "administrator" ||
+		status.value === "creator"
+	) {
+		await nextTick();
+		showDesktopFullscreen();
+	}
 });
 </script>
 
