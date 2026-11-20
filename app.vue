@@ -152,11 +152,11 @@ function startRegularEntry() {
         telegramUserId > 0
           ? String(telegramUserId)
           : undefined;
-
+      const isDesktop = Ya.Context.AdvManager.getPlatform?.() === "desktop";
       Ya.Context.AdvManager.render({
-        blockId: "R-A-19395198-2",
+        blockId: isDesktop ? "R-A-19395198-6" : "R-A-19395198-2",
         type: "fullscreen",
-        platform: "touch",
+        platform: isDesktop ? "desktop" : "touch",
         ...(tgUid ? { tgUid } : {}),
         onError: (data: { type?: string; code?: string; text?: string }) => {
           console.warn("[Astron Yandex Ads] onError:", data.type, data.code, data.text);
