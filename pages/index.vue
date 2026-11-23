@@ -18,7 +18,7 @@ const route = useRoute();
 const miniApp = useMiniApp();
 
 const userStore = useUserStore();
-const { balance, isPro, proStatusChecked } = storeToRefs(userStore);
+const { isPro, proStatusChecked } = storeToRefs(userStore);
 
 const newFile = ref(false);
 
@@ -273,10 +273,6 @@ const shareApp = () => {
 					class="inline-flex items-center rounded-md border border-[#C9A34B] bg-[#111111] px-2.5 py-0.5 text-sm font-bold tracking-wide text-[#E8C66A]"
 				>PRO</span>
 			</div>
-			<p class="text-lg">
-				Balans:
-				{{ new Intl.NumberFormat("uz-Uz").format(parseInt(balance)) }}
-			</p>
 		</div>
 		<div
 			class="h-[calc(100%-12rem)] flex flex-col gap-2 bg-background border-t rounded-t-3xl p-5"
