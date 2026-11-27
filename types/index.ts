@@ -1,7 +1,8 @@
 export interface ISubject {
     subject_id: string
     subject_name: string
-    subject_status: string
-    subject_type: string
-    subject_order: string
+    price: number
+    q_status: number
+    t_status: number
+    purchased: boolean
 }
