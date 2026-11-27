@@ -127,14 +127,13 @@ onUnmounted(() => {
 						Ilovadan foydalanish uchun rasmiy Telegram kanalimizga
 						obuna bo'ling.
 					</p>
-					<button
-    type="button"
-    class="w-full"
-    :class="buttonVariants({ variant: 'default' })"
-    @click="miniApp.openTelegramLink('https://t.me/astron_onlayn_test')"
+					<a
+    href="https://t.me/astron_onlayn_test"
+    class="font-semibold text-center w-full"
+    style="color: #168ACD;"
 >
-    Kanalga obuna bo'lish
-</button>
+    👉 @astron_onlayn_test
+</a>
 					<p class="italic text-sm text-center w-full">
 						Eslatma: Kanalga obuna bo'lgandan keyin ilovadan chiqib,
 						qaytadan kiring.
