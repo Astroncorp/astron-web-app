@@ -132,7 +132,70 @@ const calculate = computed(() => () => {
     return { all, correct, incorrect, selected };
 });
 
+// Astron PRO — Yandex Overlay
+const OVERLAY_BLOCK_ID = "R-A-19395198-7";
 
+let overlayActive = true;
+let overlayRequested = false;
+
+const showOverlayAd = () => {
+    if (!proPermissions.value.show_ads) return;
+    if (!overlayActive || overlayRequested) return;
+
+    const w = window as any;
+    const platform = w.Telegram?.WebApp?.platform;
+
+    if (!["android", "android_x", "ios"].includes(platform)) return;
+
+    const screenWidth = window.screen.width;
+    if (screenWidth < 320 || screenWidth > 420) return;
+
+    try {
+        w.yaContextCb = w.yaContextCb || [];
+
+        w.yaContextCb.push(() => {
+            if (!overlayActive || overlayRequested) return;
+            if (!proPermissions.value.show_ads) return;
+
+            try {
+                overlayRequested = true;
+
+                w.Ya.Context.AdvManager.render({
+                    blockId: OVERLAY_BLOCK_ID,
+                    type: "overlay",
+                    platform: "touch",
+                    onClose: () => {
+                        console.log("Overlay closed");
+                    },
+                    onError: (error: unknown) => {
+                        console.error("Overlay error:", error);
+                    },
+                    onRender: (data: unknown) => {
+                        console.log("Overlay rendered:", data);
+                    }
+                });
+            } catch (error) {
+                console.error("Overlay render error:", error);
+            }
+        });
+    } catch (error) {
+        console.error("Overlay init error:", error);
+    }
+};
+
+onBeforeUnmount(() => {
+    overlayActive = false;
+
+    if (!overlayRequested) return;
+
+    try {
+        (window as any).Ya?.Context?.AdvManager?.destroy?.({
+            blockId: OVERLAY_BLOCK_ID
+        });
+    } catch (error) {
+        console.error("Overlay destroy error:", error);
+    }
+});
 definePageMeta({
     middleware: [
         "get-subjects",
@@ -144,6 +207,7 @@ onMounted(() => {
     getTests();
     getResultMeta();
     isLoading.value = false;
+    showOverlayAd();
 });
 </script>
 
