@@ -127,12 +127,14 @@ onUnmounted(() => {
 						Ilovadan foydalanish uchun rasmiy Telegram kanalimizga
 						obuna bo'ling.
 					</p>
-					<NuxtLink
-						class="w-full"
-						:class="buttonVariants({ variant: 'default' })"
-						to="https://t.me/astron_onlayn_test"
-						>Kanalga obuna bo'lish</NuxtLink
-					>
+					<button
+    type="button"
+    class="w-full"
+    :class="buttonVariants({ variant: 'default' })"
+    @click="miniApp.openTelegramLink('https://t.me/astron_onlayn_test')"
+>
+    Kanalga obuna bo'lish
+</button>
 					<p class="italic text-sm text-center w-full">
 						Eslatma: Kanalga obuna bo'lgandan keyin ilovadan chiqib,
 						qaytadan kiring.
