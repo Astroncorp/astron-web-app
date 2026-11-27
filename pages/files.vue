@@ -146,12 +146,13 @@ onMounted(async () => {
 						Ilovadan foydalanish uchun rasmiy Telegram kanalimizga
 						obuna bo'ling.
 					</p>
-					<NuxtLink
-						class="w-full"
-						:class="buttonVariants({ variant: 'default' })"
-						to="https://t.me/astron_onlayn_test"
-						>Kanalga obuna bo'lish</NuxtLink
-					>
+					<a
+    href="https://t.me/astron_onlayn_test"
+    class="font-semibold text-center w-full"
+    style="color: #168ACD;"
+>
+    👉 @astron_onlayn_test
+</a>
 					<p class="italic text-sm text-center">
 						Eslatma: Kanalga obuna bo'lgandan keyin ilovadan chiqib,
 						qaytadan kiring.
