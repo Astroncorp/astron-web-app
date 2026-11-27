@@ -144,17 +144,9 @@ onMounted(async () => {
 				<div
 					class="border bg-background p-5 rounded-md flex flex-col gap-5"
 				>
-					<p class="text-center text-lg">
-						Ilovadan foydalanish uchun rasmiy Telegram kanalimizga
-						obuna bo'ling.
-					</p>
-					<a
-    href="https://t.me/astron_onlayn_test"
-    class="font-semibold text-center w-full"
-    style="color: #168ACD;"
->
-    👉 @astron_onlayn_test
-</a>
+<p class="text-center text-lg">
+    Ilovadan foydalanish uchun <strong>"Astron|Onlayn test ilovasi"</strong> Telegram kanaliga obuna bo'ling.
+</p>
 					<p class="italic text-sm text-center">
 						Eslatma: Kanalga obuna bo'lgandan keyin ilovadan chiqib,
 						qaytadan kiring.
